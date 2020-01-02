@@ -1,28 +1,31 @@
-from conans.model.conan_file import ConanFile
+from conans import ConanFile
 from conans import CMake
 
 
 class MathLibHelper(ConanFile):
     name = "MathLibHelper"
     version = "0.1.0"
-    url = "https://github.com/lasote/conan-gtest-example"
     license = "MIT"
-    settings = "os", "compiler", "arch", "build_type"
+    settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
-    cmake = None
-    requires = "gtest/1.8.1@bincrafters/stable"
-    default_options = "gtest:shared=True"
+    exports = "*"
+    options = {"shared": [True, False]}
+    requires = "doctest/2.3.4@bincrafters/stable"
+    default_options = "shared=False"
 
     def build(self):
-        self.cmake = CMake(self)
-        self.cmake.configure()
-        self.cmake.build()
+        shared = {"BUILD_SHARED_LIBS": self.options.shared}
+        cmake = CMake(self)
+        cmake.configure(defs=shared)
+        cmake.build()
 
-    def imports(self):
-        self.copy("*.so", "bin", "lib")
-        self.copy("*.dll", "bin", "bin")
-        self.copy("*.dylib", "bin", "lib")
+    def package(self):
+        self.copy("*.h", dst="include")
+        self.copy("*.lib", dst="lib", src="lib", keep_path=False)
+        self.copy("*.dll", dst="bin", src="bin", keep_path=False)
+        self.copy("*.dylib", dst="bin", src="lib", keep_path=False)
+        self.copy("*.so", dst="lib", keep_path=False)
+        self.copy("*.a", dst="lib", keep_path=False)
 
-    def test(self):
-        target_test = "RUN_TESTS" if self.settings.os == "Windows" else "test"
-        self.cmake.build(target=target_test)
+    def package_info(self):
+        self.cpp_info.libs = ["MathLibHelper"]
