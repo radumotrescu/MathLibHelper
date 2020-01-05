@@ -41,7 +41,35 @@ namespace MathLib
 					md[rowIdx][colIdx] = sum;
 				}
 			}
-			return md;
+			return { md };
+		}
+
+		Matrix Addition(const Matrix& rhs) const
+		{
+			auto md = MatrixData(size, std::vector<double>(size, 0));
+			#pragma omp parallel for
+			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
+			{
+				for (auto colIdx = 0; colIdx < size; colIdx++)
+				{
+					md[rowIdx][colIdx] = m_data[rowIdx][colIdx] + rhs.m_data[rowIdx][colIdx];
+				}
+			}
+			return { md };
+		}
+
+		Matrix Subtraction(const Matrix& rhs) const
+		{
+			auto md = MatrixData(size, std::vector<double>(size, 0));
+			#pragma omp parallel for
+			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
+			{
+				for (auto colIdx = 0; colIdx < size; colIdx++)
+				{
+					md[rowIdx][colIdx] = m_data[rowIdx][colIdx] - rhs.m_data[rowIdx][colIdx];
+				}
+			}
+			return { md };
 		}
 
 		Matrix(const Matrix& other) = default;

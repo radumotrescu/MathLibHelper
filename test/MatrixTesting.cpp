@@ -31,4 +31,28 @@ TEST_SUITE("MatN tests")
 		REQUIRE_EQ(result.m_data[0], std::vector<double>{2., 2.});
 		REQUIRE_EQ(result.m_data[1], std::vector<double>{2., 2.});
 	}
+
+	TEST_CASE("Matrix simple addition")
+	{
+		const auto mat = Matrix<2>({ {2., 2.}, 
+									  {2., 2.} });
+
+		const auto identity = Matrix<2>({ {1., 0.},
+									  {0., 1.} });
+		const auto result = mat.Addition(identity);
+		REQUIRE_EQ(result.m_data[0], std::vector<double>{3., 2.});
+		REQUIRE_EQ(result.m_data[1], std::vector<double>{2., 3.});
+	}
+
+	TEST_CASE("Matrix simple subtraction")
+	{
+		const auto mat = Matrix<2>({ {2., 2.}, 
+									  {2., 2.} });
+
+		const auto identity = Matrix<2>({ {1., 0.},
+									  {0., 1.} });
+		const auto result = mat.Subtraction(identity);
+		REQUIRE_EQ(result.m_data[0], std::vector<double>{1., 2.});
+		REQUIRE_EQ(result.m_data[1], std::vector<double>{2., 1.});
+	}
 }
