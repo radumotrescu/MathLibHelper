@@ -1,5 +1,4 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest.h"
+#include <doctest/doctest.h>
 #include <type_traits>
 
 #include <Vec3.h>
@@ -9,12 +8,10 @@ using namespace MathLib;
 
 TEST_SUITE("Vec3 tests")
 {
-
 	TEST_CASE("Vec3 is POD type")
 	{
 		REQUIRE(std::is_pod<Vec3>::value);
 	}
-
 
 	TEST_CASE("Vec3 equality operator works")
 	{
@@ -50,7 +47,6 @@ TEST_SUITE("Vec2 tests")
 	{
 		REQUIRE(std::is_pod<Vec2>::value);
 	}
-
 
 	TEST_CASE("Vec2 equality operator works")
 	{
