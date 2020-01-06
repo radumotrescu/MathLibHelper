@@ -2,7 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(MathLibHelper-test CXX)
 
 file(GLOB_RECURSE TEST_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-set(files_all ${TEST_SOURCE})
+file(GLOB_RECURSE TEST_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+set(files_all ${TEST_SOURCE} ${TEST_HEADER})
 
 
 add_executable(MathLibHelper_test ${files_all})

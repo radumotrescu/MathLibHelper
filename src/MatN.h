@@ -30,7 +30,7 @@ namespace MathLib
 		Matrix SimpleMulti(const Matrix& rhs) const
 		{
 			auto md = MatrixData(size, std::vector<double>(size, 0));
-			#pragma omp parallel for
+            #pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
 			{
 				for (auto colIdx = 0; colIdx < size; colIdx++)
@@ -47,7 +47,7 @@ namespace MathLib
 		Matrix Addition(const Matrix& rhs) const
 		{
 			auto md = MatrixData(size, std::vector<double>(size, 0));
-			#pragma omp parallel for
+            #pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
 			{
 				for (auto colIdx = 0; colIdx < size; colIdx++)
@@ -70,6 +70,49 @@ namespace MathLib
 				}
 			}
 			return { md };
+		}
+
+		Matrix operator+(const Matrix& rhs) const
+		{
+			return Addition(rhs);
+		};
+
+		Matrix operator-(const Matrix& rhs) const
+		{
+			return Subtraction(rhs);
+		};
+
+		Matrix operator*(const Matrix& rhs) const
+		{
+			return SimpleMulti(rhs);
+		};
+
+		std::vector<double> ConvertToRowMajor() const
+		{
+			auto result = std::vector<double>();
+			result.reserve(size * size);
+			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
+			{
+				for (auto colIdx = 0; colIdx < size; colIdx++)
+				{
+					result.push_back(m_data[rowIdx][colIdx]);
+				}
+			}
+			return result;
+		}
+
+		std::vector<double> ConvertToColMajor() const
+		{
+			auto result = std::vector<double>();
+			result.reserve(size * size);
+			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
+			{
+				for (auto colIdx = 0; colIdx < size; colIdx++)
+				{
+					result.push_back(m_data[colIdx][rowIdx]);
+				}
+			}
+			return result;
 		}
 
 		Matrix(const Matrix& other) = default;
