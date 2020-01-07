@@ -36,4 +36,40 @@ TEST_SUITE("Vec3 tests")
 		const auto expected = VecN<3>{ 0., 0., 0. };
 		CHECK(result == expected);
 	}
+
+	TEST_CASE("Vec3 scalar multiplication works")
+	{
+		auto lhs = VecN<3>{ {1., 1., 1.} };
+		auto scalar = 2;
+		const auto result = lhs * scalar;
+		const auto expected = VecN<3>{ 2., 2., 2. };
+		CHECK(result == expected);
+	}
+
+	TEST_CASE("Vec3 vector multiplication operator works")
+	{
+		auto lhs = VecN<3>{ {2., 3., 4.} };
+		auto rhs = VecN<3>{ {2., 2., 2.} };
+		const auto result = lhs * rhs;
+		const auto expected = VecN<3>{ 4., 6., 8. };
+		CHECK(result == expected);
+	}
+
+	TEST_CASE("Vec3 scalar division works")
+	{
+		auto lhs = VecN<3>{ {1., 1., 1.} };
+		auto scalar = 2;
+		const auto result = lhs / scalar;
+		const auto expected = VecN<3>{ 0.5, 0.5, 0.5 };
+		CHECK(result == expected);
+	}
+
+	TEST_CASE("Vec3 vector division operator works")
+	{
+		auto lhs = VecN<3>{ {2., 3., 4.} };
+		auto rhs = VecN<3>{ {2., 2., 2.} };
+		const auto result = lhs / rhs;
+		const auto expected = VecN<3>{ 1., 1.5, 2. };
+		CHECK(result == expected);
+	}
 }
