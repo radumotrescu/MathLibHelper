@@ -22,6 +22,11 @@ namespace MathLib
 			m_data = init_data;
 		}
 
+		MatrixData GetData() const
+		{
+			return m_data;
+		}
+
 		void MatrixReset()
 		{
 			m_data = MatrixData(size, std::vector<double>(size, 0));
@@ -30,14 +35,16 @@ namespace MathLib
 		Matrix SimpleMulti(const Matrix& rhs) const
 		{
 			auto md = MatrixData(size, std::vector<double>(size, 0));
-            #pragma omp parallel for
+			const auto rowMajor = ConvertToRowMajor();
+#pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
 			{
+				const auto colMajor = rhs.ConvertToColMajor();
 				for (auto colIdx = 0; colIdx < size; colIdx++)
 				{
 					auto sum = 0.;
 					for (auto idx = 0; idx < size; idx++)
-						sum += m_data[rowIdx][idx] * rhs.m_data[idx][colIdx];
+						sum += rowMajor[rowIdx * size + idx] * colMajor[colIdx * size + idx];
 					md[rowIdx][colIdx] = sum;
 				}
 			}
@@ -47,7 +54,7 @@ namespace MathLib
 		Matrix Addition(const Matrix& rhs) const
 		{
 			auto md = MatrixData(size, std::vector<double>(size, 0));
-            #pragma omp parallel for
+#pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
 			{
 				for (auto colIdx = 0; colIdx < size; colIdx++)
@@ -61,7 +68,7 @@ namespace MathLib
 		Matrix Subtraction(const Matrix& rhs) const
 		{
 			auto md = MatrixData(size, std::vector<double>(size, 0));
-			#pragma omp parallel for
+#pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < size; rowIdx++)
 			{
 				for (auto colIdx = 0; colIdx < size; colIdx++)
@@ -119,7 +126,7 @@ namespace MathLib
 		Matrix(Matrix&& other) = default;
 		~Matrix() = default;
 
-	public:
+	private:
 		MatrixData m_data;
 		uint64_t m_size = size;
 	};
