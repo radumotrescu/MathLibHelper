@@ -11,7 +11,6 @@ include_directories(src)
 FILE(GLOB MY_HEADERS "src/*.h")
 FILE(GLOB MY_SOURCES "src/*.cpp")
 
-
 # Build our project with the help of conan.
 include_directories(${CONAN_INCLUDE_DIRS})
 add_library(MathLibHelper STATIC ${MY_HEADERS} ${MY_SOURCES})
@@ -20,3 +19,4 @@ target_link_libraries(MathLibHelper ${CONAN_LIBS})
 # Now enable our tests
 enable_testing()
 add_subdirectory(test)
+add_subdirectory(tiny_renderer)
