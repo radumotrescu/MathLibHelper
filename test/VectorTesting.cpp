@@ -72,4 +72,23 @@ TEST_SUITE("Vec3 tests")
 		const auto expected = VecN<3>{ 1., 1.5, 2. };
 		CHECK(result == expected);
 	}
+
+	TEST_CASE("Vec3 has Z")
+	{
+		auto vec3 = Vec3{};
+		REQUIRE_EQ(0., vec3.Z());
+	}
+
+	TEST_CASE("Vec4 has Z")
+	{
+		auto vec4 = Vec4{};
+		REQUIRE_EQ(0., vec4.Z());
+	}
+
+	//TEST_CASE("Vec2 doesnt have Z")
+	//{
+	//	auto vec2 = Vec2{};
+	//	auto Z = vec2.Z();
+	//}
+	
 }

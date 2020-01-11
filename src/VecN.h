@@ -2,6 +2,7 @@
 #define Vec3_h_include
 
 #include <array>
+#include <type_traits>
 
 namespace MathLib
 {
@@ -64,6 +65,12 @@ namespace MathLib
 					return false;
 			return true;
 		};
+
+		template <typename = std::enable_if_t<size >= 3>>
+		double Z()
+		{
+			return m_data[2];
+		}
 
 		std::array<double, size> m_data;
 	};
