@@ -6,7 +6,7 @@
 
 namespace MathLib
 {
-	template <uint64_t size>
+	template <class T, uint64_t size>
 	struct VecN
 	{
 		VecN operator+(const VecN& rhs) const
@@ -72,12 +72,12 @@ namespace MathLib
 			return m_data[2];
 		}
 
-		std::array<double, size> m_data;
+		std::array<T, size> m_data;
 	};
 
-	using Vec3 = VecN<3>;
-	using Vec2 = VecN<2>;
-	using Vec4 = VecN<4>;
+	using Vec3f = VecN<double, 3>;
+	using Vec2f = VecN<double, 2>;
+	using Vec4f = VecN<double, 4>;
 }
 
 #endif
