@@ -62,6 +62,8 @@ int main()
 	{
 		// each face has 3 lines
 		auto face = model.face(i);
+		if (face.empty())
+			continue;
 		for (auto j = 0; j < 3; j++)
 		{
 			// each line has 3 vertices 
