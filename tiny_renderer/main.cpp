@@ -60,9 +60,13 @@ int main()
 	auto model = Model("obj/african_head.obj");
 	for (auto i = 0; i < model.nfaces(); i++)
 	{
+		// each face has 3 lines
 		auto face = model.face(i);
 		for (auto j = 0; j < 3; j++)
 		{
+			// each line has 3 vertices 
+			// what this code does is goes and fetches every line from the face
+			// so line 1 and line 2, line 2 and line 3, line 3 and line 1 (0 based)
 			Vec3f v0 = model.vert(face[j]);
 			Vec3f v1 = model.vert(face[(j + 1) % 3]);
 
