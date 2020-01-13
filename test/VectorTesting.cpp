@@ -73,22 +73,9 @@ TEST_SUITE("Vec3 tests")
 		CHECK(result == expected);
 	}
 
-	TEST_CASE("Vec3 has Z")
+	TEST_CASE("Vec3 vector has subscript operator")
 	{
-		auto vec3 = Vec3f{};
-		REQUIRE_EQ(0., vec3.Z());
+		auto vec = Vec3f{ {2., 3., 4.} };
+		REQUIRE_EQ(2., vec[0]);
 	}
-
-	TEST_CASE("Vec4 has Z")
-	{
-		auto vec4 = Vec4f{};
-		REQUIRE_EQ(0., vec4.Z());
-	}
-
-	//TEST_CASE("Vec2 doesnt have Z")
-	//{
-	//	auto vec2 = Vec2{};
-	//	auto Z = vec2.Z();
-	//}
-	
 }
