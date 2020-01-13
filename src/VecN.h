@@ -66,18 +66,40 @@ namespace MathLib
 			return true;
 		};
 
+		template <typename = std::enable_if_t<size >= 1>>
+		T X() const
+		{
+			return m_data[0];
+		}
+
+		template <typename = std::enable_if_t<size >= 2>>
+		T Y() const
+		{
+			return m_data[1];
+		}
+
 		template <typename = std::enable_if_t<size >= 3>>
-		double Z()
+		T Z() const
 		{
 			return m_data[2];
+		}
+
+		template <typename = std::enable_if_t<size >= 4>>
+		T W() const
+		{
+			return m_data[3];
 		}
 
 		std::array<T, size> m_data;
 	};
 
-	using Vec3f = VecN<double, 3>;
 	using Vec2f = VecN<double, 2>;
+	using Vec3f = VecN<double, 3>;
 	using Vec4f = VecN<double, 4>;
+
+	using Vec2i = VecN<int, 2>;
+	using Vec3i = VecN<int, 3>;
+	using Vec4i = VecN<int, 4>;
 }
 
 #endif

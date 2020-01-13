@@ -7,8 +7,55 @@ namespace
 {
 	const TGAColor white = TGAColor(255, 255, 255, 255);
 	const TGAColor red = TGAColor(255, 0, 0, 255);
-	const int width = 800;
-	const int height = 800;
+	const TGAColor green = TGAColor(0, 255, 0, 255);
+	const int width = 250;
+	const int height = 250;
+}
+
+void line(int x0, int y0, int x1, int y1, TGAImage& image, const TGAColor& color);
+
+void african_head()
+{
+	TGAImage image(width, height, TGAImage::RGB);
+	//line(13, 20, 80, 40, image, white);
+	//line(20, 13, 40, 80, image, red);
+	//line(80, 40, 13, 20, image, red);
+
+
+	auto model = Model("obj/african_head.obj");
+	for (auto i = 0; i < model.nfaces(); i++)
+	{
+		// each face has 3 lines
+		auto face = model.face(i);
+		if (face.empty())
+			continue;
+		for (auto j = 0; j < 3; j++)
+		{
+			// each line has 3 vertices 
+			// what this code does is goes and fetches every line from the face
+			// so line 1 and line 2, line 2 and line 3, line 3 and line 1 (0 based)
+			Vec3f v0 = model.vert(face[j]);
+			Vec3f v1 = model.vert(face[(j + 1) % 3]);
+
+			/* 
+			we do the (coord + 1) / (size / 2.) thing because the file
+			uses coordinates from [-1, +1], thus the need
+			to get rid of the negative sign
+			so the coordinates would match [0, 2],
+			thus the need to divide by the size/2
+			so the coordinates would match [0, 1]
+			*/
+			int x0 = static_cast<int>((v0.m_data[0] + 1.)*width / 2.);
+			int y0 = static_cast<int>((v0.m_data[1] + 1.)*height / 2.);
+
+			int x1 = static_cast<int>((v1.m_data[0] + 1.)*width / 2.);
+			int y1 = static_cast<int>((v1.m_data[1] + 1.)*height / 2.);
+			line(x0, y0, x1, y1, image, white);
+		}
+	}
+
+	image.flip_vertically(); // I want to have the origin at the left bottom corner of the image
+	image.write_tga_file("output.tga");
 }
 
 void line(int x0, int y0, int x1, int y1, TGAImage& image, const TGAColor& color)
@@ -49,45 +96,24 @@ void line(int x0, int y0, int x1, int y1, TGAImage& image, const TGAColor& color
 	}
 }
 
+void triangle(const Vec2i& p1, const Vec2i& p2, const Vec2i& p3, TGAImage& image, const TGAColor& color)
+{
+	line(p1.X(), p1.Y(), p2.X(), p2.Y(), image, color);
+	line(p2.X(), p2.Y(), p3.X(), p3.Y(), image, color);
+	line(p3.X(), p3.Y(), p1.X(), p1.Y(), image, color);
+}
+
 int main()
 {
 	TGAImage image(width, height, TGAImage::RGB);
-	//line(13, 20, 80, 40, image, white);
-	//line(20, 13, 40, 80, image, red);
-	//line(80, 40, 13, 20, image, red);
 
+	const auto t0 = std::vector<Vec2i>{ Vec2i{10, 70},   Vec2i{50, 160},  Vec2i{70, 80} };
+	const auto t1 = std::vector<Vec2i>{ Vec2i{180, 50},  Vec2i{150, 1},   Vec2i{70, 180} };
+	const auto t2 = std::vector<Vec2i>{ Vec2i{180, 150}, Vec2i{120, 160}, Vec2i{130, 180} };
 
-	auto model = Model("obj/african_head.obj");
-	for (auto i = 0; i < model.nfaces(); i++)
-	{
-		// each face has 3 lines
-		auto face = model.face(i);
-		if (face.empty())
-			continue;
-		for (auto j = 0; j < 3; j++)
-		{
-			// each line has 3 vertices 
-			// what this code does is goes and fetches every line from the face
-			// so line 1 and line 2, line 2 and line 3, line 3 and line 1 (0 based)
-			Vec3f v0 = model.vert(face[j]);
-			Vec3f v1 = model.vert(face[(j + 1) % 3]);
-
-			/* 
-			we do the (coord + 1) / (size / 2.) thing because the file
-			uses coordinates from [-1, +1], thus the need
-			to get rid of the negative sign
-			so the coordinates would match [0, 2],
-			thus the need to divide by the size/2
-			so the coordinates would match [0, 1]
-			*/
-			int x0 = static_cast<int>((v0.m_data[0] + 1.)*width / 2.);
-			int y0 = static_cast<int>((v0.m_data[1] + 1.)*height / 2.);
-
-			int x1 = static_cast<int>((v1.m_data[0] + 1.)*width / 2.);
-			int y1 = static_cast<int>((v1.m_data[1] + 1.)*height / 2.);
-			line(x0, y0, x1, y1, image, white);
-		}
-	}
+	triangle(t0[0], t0[1], t0[2], image, white);
+	//triangle(t1[0], t1[1], t1[2], image, white);
+	//triangle(t2[0], t2[1], t2[2], image, white);
 
 	image.flip_vertically(); // I want to have the origin at the left bottom corner of the image
 	image.write_tga_file("output.tga");
