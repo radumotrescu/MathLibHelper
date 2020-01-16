@@ -9,6 +9,46 @@ namespace MathLib
 	template <class T, uint64_t size>
 	struct VecN
 	{
+		VecN()
+		{
+		}
+
+		VecN(std::initializer_list<T> data)
+		{
+			int i = 0;
+			for (const auto& x : data)
+			{
+				m_data[i++] = x;
+			}
+		}
+
+		VecN(const std::array<T, size>& data)
+			:m_data(data)
+		{
+		}
+
+		VecN(VecN&& other)
+		{
+			m_data = other.m_data;
+		}
+
+		VecN& operator=(VecN&& other)
+		{
+			m_data = other.m_data;
+			return *this;
+		}
+
+		VecN(const VecN& other)
+		{
+			m_data = other.m_data;
+		}
+
+		VecN& operator=(const VecN& other)
+		{
+			m_data = other.m_data;
+			return *this;
+		}
+
 		VecN operator+(const VecN& rhs) const
 		{
 			auto data = std::array<double, size>();
