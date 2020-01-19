@@ -106,6 +106,14 @@ namespace MathLib
 			return true;
 		};
 
+		double Dot(const VecN& rhs) const
+		{
+			auto dotProduct = 0.;
+			for (auto i = 0; i < size; i++)
+				dotProduct += m_data[i] * rhs.m_data[i];
+			return dotProduct;
+		}
+
 		template <typename = std::enable_if_t<size >= 1>>
 		T X() const
 		{

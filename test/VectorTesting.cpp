@@ -7,11 +7,6 @@ using namespace MathLib;
 
 TEST_SUITE("Vec3 tests")
 {
-	TEST_CASE("Vec3 is POD type")
-	{
-		REQUIRE(std::is_pod<Vec3f>::value);
-	}
-
 	TEST_CASE("Vec3 equality operator works")
 	{
 		const auto lhs = Vec3f{ {1., 1., 1.} };
@@ -71,6 +66,14 @@ TEST_SUITE("Vec3 tests")
 		const auto result = lhs / rhs;
 		const auto expected = Vec3f{ 1., 1.5, 2. };
 		CHECK(result == expected);
+	}
+
+	TEST_CASE("Vec3 dot product works")
+	{
+		auto lhs = Vec3f{ {1., 3., -5.} };
+		auto rhs = Vec3f{ {4., -2., -1.} };
+		const auto result = lhs.Dot(rhs);
+		REQUIRE_EQ(result, 3.);
 	}
 
 	TEST_CASE("Vec3 vector has subscript operator")
