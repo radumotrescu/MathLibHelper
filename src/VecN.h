@@ -114,6 +114,14 @@ namespace MathLib
 			return dotProduct;
 		}
 
+		template <typename = std::enable_if_t<size == 3>>
+		VecN Cross(const VecN& rhs)
+		{
+			return { Y()* rhs.Z() - Z() * rhs.Y(),
+					-(X() * rhs.Z() - Z() * rhs.X()),
+					X()* rhs.Y() - Y() * rhs.X() };
+		}
+
 		template <typename = std::enable_if_t<size >= 1>>
 		T X() const
 		{

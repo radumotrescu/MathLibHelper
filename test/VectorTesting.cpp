@@ -76,9 +76,11 @@ TEST_SUITE("Vec3 tests")
 		REQUIRE_EQ(result, 3.);
 	}
 
-	TEST_CASE("Vec3 vector has subscript operator")
+	TEST_CASE("Vec3 cross product works")
 	{
-		auto vec = Vec3f{ {2., 3., 4.} };
-		REQUIRE_EQ(2., vec[0]);
+		auto lhs = Vec3i{ {3, -3, 1} };
+		auto rhs = Vec3i{ {4, 9, 2} };
+		const auto result = lhs.Cross(rhs);
+		REQUIRE_EQ(result, Vec3i{ {-15, -2, 39} });
 	}
 }

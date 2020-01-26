@@ -132,33 +132,54 @@ void line(int x0, int y0, int x1, int y1, TGAImage& image, const TGAColor& color
 	}
 }
 
-void triangle(Vec2i p1, Vec2i p2, Vec2i p3, TGAImage& image, const TGAColor& color)
+struct BoundingBox
 {
-	if (p1.Y() > p2.Y()) std::swap(p1, p2);
-	if (p1.Y() > p3.Y()) std::swap(p1, p3);
-	if (p2.Y() > p3.Y()) std::swap(p2, p3);
-	line(p1.X(), p1.Y(), p2.X(), p2.Y(), image, green);
-	line(p2.X(), p2.Y(), p3.X(), p3.Y(), image, green);
-	line(p3.X(), p3.Y(), p1.X(), p1.Y(), image, red);
+	int minX, maxX, minY, maxY;
+};
+using BB = BoundingBox;
 
+BB findBB(Vec2i p1, Vec2i p2, Vec2i p3)
+{
 	auto minMaxX = std::minmax({ p1.X(), p2.X(), p3.X() });
 	auto minMaxY = std::minmax({ p1.Y(), p2.Y(), p3.Y() });
 	auto minX = minMaxX.first;
 	auto maxX = minMaxX.second;
 	auto minY = minMaxY.first;
 	auto maxY = minMaxY.second;
-	auto diffX = maxX - minX;
-	auto diffY = maxY - minY;
+	return { minX, maxX, minY, maxY };
+}
 
-	line(minX, minY, minX + diffX, minY, image, white);
-	line(minX, minY, minX, minY + diffY, image, white);
-	line(minX+diffX, minY, minX + diffX, minY + diffY, image, white);
-	line(minX, minY + diffY, minX + diffX, minY + diffY, image, white);
+Vec3f barycentric(Vec2i p1, Vec2i p2, Vec2i p3, Vec2i P)
+{
+	/*
+	Vec3f u = cross(
+	Vec3f(pts[2][0] - pts[0][0], pts[1][0] - pts[0][0], pts[0][0] - P[0]),
+	Vec3f(pts[2][1] - pts[0][1], pts[1][1] - pts[0][1], pts[0][1] - P[1]));
+	*/
 
-	for (auto x = minX; x < minX + diffX; x++)
+	auto u = Vec3f{ {0.+ p3.X() - p1.X(), 0.+ p2.X() - p1.X(), 0.+ p1.X() - P.X()} }.Cross(Vec3f{ 0.+ p3.Y() - p1.Y(),  0.+p2.Y() - p1.Y(),  0.+p1.Y() - P.Y() });
+	if (u.Z() < 1)
+		return { -1., 1., 1. };
+	return Vec3f{ {1. - (u.X() + u.Y()) / u.Z(), static_cast<double>(u.Y()) / u.Z(), static_cast<double>(u.X()) / u.Z()} };
+}
+
+void triangle(Vec2i p1, Vec2i p2, Vec2i p3, TGAImage& image, const TGAColor& color)
+{
+	auto bb = findBB(p1, p2, p3);
+
+	line(bb.minX, bb.minY, bb.maxX, bb.minY, image, white);
+	line(bb.minX, bb.minY, bb.minX, bb.maxY, image, white);
+	line(bb.maxX, bb.minY, bb.maxX, bb.maxY, image, white);
+	line(bb.minX, bb.maxY, bb.maxX, bb.maxY, image, white);
+
+	for (auto x = bb.minX; x < bb.maxX; x++)
 	{
-		for (auto y = minY; y < minY + diffY; y++)
+		for (auto y = bb.minY; y < bb.maxY; y++)
 		{
+			auto bc = barycentric(p1, p2, p3, { x, y });
+			if (bc.X() < 0 || bc.Y() < 0 || bc.Z() < 0)
+				continue;
+			image.set(x, y, red);
 		}
 	}
 }
@@ -168,8 +189,8 @@ void triangle_tests()
 	TGAImage image(width, height, TGAImage::RGB);
 
 	auto t1 = std::vector<Vec2i>{ Vec2i{10, 70},   Vec2i{50, 160},  Vec2i{70, 80} };
-	auto t2 = std::vector<Vec2i>{ Vec2i{180, 50},  Vec2i{150, 1},   Vec2i{70, 180} };
-	auto t3 = std::vector<Vec2i>{ Vec2i{180, 150}, Vec2i{120, 160}, Vec2i{130, 180} };
+	//auto t2 = std::vector<Vec2i>{ Vec2i{180, 50},  Vec2i{150, 1},   Vec2i{70, 180} };
+	//auto t3 = std::vector<Vec2i>{ Vec2i{180, 150}, Vec2i{120, 160}, Vec2i{130, 180} };
 
 	//triangle(t0[0], t0[1], t0[2], image, white);
 	triangle(t1[0], t1[1], t1[2], image, white);
@@ -182,6 +203,6 @@ void triangle_tests()
 
 int main()
 {
-	bmw();
+	triangle_tests();
 	return 0;
 }
