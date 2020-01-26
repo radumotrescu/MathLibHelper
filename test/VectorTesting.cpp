@@ -83,4 +83,10 @@ TEST_SUITE("Vec3 tests")
 		const auto result = lhs.Cross(rhs);
 		REQUIRE_EQ(result, Vec3i{ {-15, -2, 39} });
 	}
+
+	TEST_CASE("Vector normalization works")
+	{
+		auto vector = Vec3i{ 3, 1, 2 };
+		//REQUIRE_EQ(vector.Normalize(), 3.742);
+	}
 }

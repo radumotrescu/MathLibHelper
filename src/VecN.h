@@ -122,6 +122,16 @@ namespace MathLib
 					X()* rhs.Y() - Y() * rhs.X() };
 		}
 
+		void Normalize()
+		{
+			auto sumOfSquares = 0.;
+			for (const auto& data : m_data)
+				sumOfSquares += data * data;
+			const auto norm = sqrt(sumOfSquares);
+			for (auto& data : m_data)
+				data /= norm;
+		}
+
 		template <typename = std::enable_if_t<size >= 1>>
 		T X() const
 		{
