@@ -32,19 +32,23 @@ namespace MathLib
 			m_data = MatrixData(rowSize, std::vector<double>(colSize, 0));
 		}
 
-		Matrix SimpleMulti(const Matrix& rhs) const
+		template <uint64_t rowSize_, uint64_t colSize_>
+		Matrix SimpleMulti(const Matrix<rowSize_, colSize_>& rhs) const
 		{
-			auto md = MatrixData(rowSize, std::vector<double>(colSize, 0));
+			if (!CanBeMultiplied(rhs))
+				return {};
+
+			auto md = MatrixData(rowSize, std::vector<double>(colSize_, 0));
 			const auto rowMajor = ConvertToRowMajor();
 #pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
 			{
 				const auto colMajor = rhs.ConvertToColMajor();
-				for (auto colIdx = 0; colIdx < colSize; colIdx++)
+				for (auto colIdx = 0; colIdx < colSize_; colIdx++)
 				{
 					auto sum = 0.;
-					for (auto idx = 0; idx < rowSize; idx++)
-						sum += rowMajor[rowIdx * rowSize + idx] * colMajor[colIdx * colSize + idx];
+					for (auto idx = 0; idx < rowSize_; idx++)
+						sum += rowMajor[rowIdx * rowSize + idx] * colMajor[colIdx * colSize_ + idx];
 					md[rowIdx][colIdx] = sum;
 				}
 			}
@@ -53,6 +57,9 @@ namespace MathLib
 
 		Matrix Addition(const Matrix& rhs) const
 		{
+			if (!SizesAreEqual(rhs))
+				return {};
+
 			auto md = MatrixData(rowSize, std::vector<double>(colSize, 0));
 #pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
@@ -67,6 +74,8 @@ namespace MathLib
 
 		Matrix Subtraction(const Matrix& rhs) const
 		{
+			if (!SizesAreEqual(rhs))
+				return {};
 			auto md = MatrixData(rowSize, std::vector<double>(colSize, 0));
 #pragma omp parallel for
 			for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
@@ -89,7 +98,8 @@ namespace MathLib
 			return Subtraction(rhs);
 		};
 
-		Matrix operator*(const Matrix& rhs) const
+		template <uint64_t rowSize_, uint64_t colSize_>
+		Matrix operator*(const Matrix<rowSize_, colSize_>& rhs) const
 		{
 			return SimpleMulti(rhs);
 		};
@@ -97,7 +107,7 @@ namespace MathLib
 		std::vector<double> ConvertToRowMajor() const
 		{
 			auto result = std::vector<double>();
-			result.reserve(rowSize * rowSize);
+			result.reserve(rowSize * colSize);
 			for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
 			{
 				for (auto colIdx = 0; colIdx < colSize; colIdx++)
@@ -111,15 +121,29 @@ namespace MathLib
 		std::vector<double> ConvertToColMajor() const
 		{
 			auto result = std::vector<double>();
-			result.reserve(rowSize * rowSize);
+			result.reserve(rowSize * colSize);
+			for (auto colIdx = 0; colIdx < colSize; colIdx++)
+			{
+				for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
+				{
+					result.push_back(m_data[rowIdx][colIdx]);
+				}
+			}
+			return result;
+		}
+		bool operator==(const Matrix& rhs) const
+		{
+			if (!SizesAreEqual())
+				return false;
 			for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
 			{
 				for (auto colIdx = 0; colIdx < colSize; colIdx++)
 				{
-					result.push_back(m_data[colIdx][rowIdx]);
+					if (m_data[rowIdx][colIdx] == rhs.m_data[rowIdx][colIdx])
+						return false;
 				}
 			}
-			return result;
+			return true;
 		}
 
 		Matrix(const Matrix& other) = default;
@@ -127,9 +151,20 @@ namespace MathLib
 		~Matrix() = default;
 
 	private:
+		template <uint64_t rowSize_, uint64_t colSize_>
+		bool CanBeMultiplied(const Matrix<rowSize_, colSize_>& rhs) const
+		{
+			return rowSize == colSize_;
+		}
+
+		bool SizesAreEqual(const Matrix& rhs) const
+		{
+			return m_rowSize == rhs.m_rowSize && m_colSize == rhs.m_colSize;
+		}
+
 		MatrixData m_data;
-		uint64_t m_rowSize = rowSize;
-		uint64_t m_colSize = colSize;
+		const uint64_t m_rowSize = rowSize;
+		const uint64_t m_colSize = colSize;
 	};
 
 	using Mat2 = Matrix<2, 2>;
