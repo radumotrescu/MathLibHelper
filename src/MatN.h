@@ -39,17 +39,33 @@ namespace MathLib
 				return {};
 
 			auto md = MatrixData(rowSize, std::vector<double>(colSize_, 0));
-			const auto rowMajor = ConvertToRowMajor();
 #pragma omp parallel for
-			for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
+			if (colSize_ != colSize || rowSize != rowSize_)
 			{
-				const auto colMajor = rhs.ConvertToColMajor();
-				for (auto colIdx = 0; colIdx < colSize_; colIdx++)
+				for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
 				{
-					auto sum = 0.;
-					for (auto idx = 0; idx < rowSize_; idx++)
-						sum += rowMajor[rowIdx * rowSize + idx] * colMajor[colIdx * colSize_ + idx];
-					md[rowIdx][colIdx] = sum;
+					for (auto colIdx = 0; colIdx < colSize_; colIdx++)
+					{
+						auto sum = 0.;
+						for (auto idx = 0; idx < colSize; idx++)
+							sum += m_data[rowIdx][idx] * rhs.m_data[idx][colIdx];
+						md[rowIdx][colIdx] = sum;
+					}
+				}
+			}
+			else
+			{
+				const auto rowMajor = ConvertToRowMajor();
+				const auto colMajor = rhs.ConvertToColMajor();
+				for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
+				{
+					for (auto colIdx = 0; colIdx < colSize_; colIdx++)
+					{
+						auto sum = 0.;
+						for (auto idx = 0; idx < rowSize_; idx++)
+							sum += rowMajor[rowIdx * rowSize + idx] * colMajor[colIdx * colSize_ + idx];
+						md[rowIdx][colIdx] = sum;
+					}
 				}
 			}
 			return { md };
@@ -150,6 +166,7 @@ namespace MathLib
 		Matrix(Matrix&& other) = default;
 		~Matrix() = default;
 
+		MatrixData m_data;
 	private:
 		template <uint64_t rowSize_, uint64_t colSize_>
 		bool CanBeMultiplied(const Matrix<rowSize_, colSize_>& rhs) const
@@ -162,7 +179,6 @@ namespace MathLib
 			return m_rowSize == rhs.m_rowSize && m_colSize == rhs.m_colSize;
 		}
 
-		MatrixData m_data;
 		const uint64_t m_rowSize = rowSize;
 		const uint64_t m_colSize = colSize;
 	};
