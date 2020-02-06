@@ -79,6 +79,16 @@ TEST_SUITE("MatN tests")
             REQUIRE_EQ(result.GetData()[0], std::vector<double>{2., 2.});
             REQUIRE_EQ(result.GetData()[1], std::vector<double>{2., 2.});
         }
+
+        {
+            const auto mat1 = Matrix<2, 2>({ {0.5, 0.}, {0., 1.} });
+
+            const auto mat2 = Matrix<2, 1>({ {2.},
+                                             {2.} });
+            const auto result = mat1 * mat2;
+            REQUIRE_EQ(result.GetData()[0], std::vector<double>{1.});
+            REQUIRE_EQ(result.GetData()[1], std::vector<double>{2.});
+        }
     }
 
     TEST_CASE("Matrix simple addition")

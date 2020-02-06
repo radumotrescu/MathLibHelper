@@ -3,6 +3,7 @@
 #include "../test/TestUtils.h"
 #include <iostream>
 #include <limits>
+#include "Entities.h"
 
 using namespace MathLib;
 
@@ -116,11 +117,6 @@ void triangle_tests()
     image.write_tga_file("output.tga");
 }
 
-void transformationTests()
-{
-    TGAImage image(400, 400, TGAImage::RGB);
-}
-
 void african_head()
 {
     TGAImage image(width, height, TGAImage::RGB);
@@ -158,10 +154,22 @@ void african_head()
     image.write_tga_file("output.tga");
 }
 
+void transformationTests()
+{
+    TGAImage image(400, 400, TGAImage::RGB);
+
+    auto p1 = Point(Vec2f{ 2., 2. });
+    p1.scale({ 2., 0.5 });
+
+    image.flip_vertically();
+    image.write_tga_file("transformations.tga");
+}
+
 int main()
 {
-    triangle_tests();
+    //triangle_tests();
     //bmw();
-    african_head();
+    //african_head();
+    transformationTests();
     return 0;
 }
