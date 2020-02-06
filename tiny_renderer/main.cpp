@@ -158,8 +158,12 @@ void transformationTests()
 {
     TGAImage image(400, 400, TGAImage::RGB);
 
-    auto p1 = Point(Vec2f{ 2., 2. });
+    auto p1 = Point({ 2., 2. });
     p1.scale({ 2., 0.5 });
+    p1.translate({ 1., 1. });
+
+    auto p2 = Point({ 1., 0. });
+    p2.rotate(90);
 
     image.flip_vertically();
     image.write_tga_file("transformations.tga");
