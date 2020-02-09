@@ -171,9 +171,13 @@ void transformationTests()
 
     auto l2 = Line2D({ 0., 0. }, { 1., 0. });
     l2.rotate(90);
-    l2.rotate(90);
-    l2.rotate(90);
-    l2.rotate(90);
+
+    auto t1 = Triangle2D({ 0., 0. }, { 1., 0. }, { 1., 1. });
+    t1.scale({ 2., 0 });
+    t1.translate({ 10., -1 });
+
+    auto t2 = Triangle2D({ 0., 0. }, { 1., 0. }, { 1., 1. });
+    t2.rotate(90);
 
     image.flip_vertically();
     image.write_tga_file("transformations.tga");
