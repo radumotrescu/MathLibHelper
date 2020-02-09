@@ -162,6 +162,11 @@ namespace MathLib
             return true;
         }
 
+        double at(int row, int col) const
+        {
+            return m_data[row][col];
+        }
+
         Matrix(const Matrix& other) = default;
         Matrix(Matrix&& other) = default;
         ~Matrix() = default;
