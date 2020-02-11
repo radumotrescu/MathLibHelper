@@ -1,3 +1,6 @@
+#ifndef Entities_h_include
+#define Entities_h_include
+
 #include <numeric>
 
 #include <VecN.h>
@@ -149,3 +152,5 @@ struct Rectangle2D
         m_data[3] = { result.at(0, 3), result.at(1, 3) };
     }
 };
+
+#endif
