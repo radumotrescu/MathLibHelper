@@ -156,7 +156,7 @@ namespace MathLib
             return m_data[3];
         }
 
-        T operator[](int index) const
+        T& operator[](int index) const
         {
             return m_data[index];
         }

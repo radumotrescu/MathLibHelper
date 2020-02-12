@@ -4,6 +4,7 @@
 #include <iostream>
 #include <limits>
 #include "Entities.h"
+#include "ImageRenderer2D.h"
 
 using namespace MathLib;
 
@@ -156,8 +157,6 @@ void african_head()
 
 void transformationTests()
 {
-    TGAImage image(400, 400, TGAImage::RGB);
-
     auto p1 = Point2D({ 2., 2. });
     p1.scale({ 2., 0.5 });
     p1.translate({ 1., 1. });
@@ -178,9 +177,14 @@ void transformationTests()
 
     auto t2 = Triangle2D({ 0., 0. }, { 1., 0. }, { 1., 1. });
     t2.rotate(90);
+}
 
-    image.flip_vertically();
-    image.write_tga_file("transformations.tga");
+void rendererTest()
+{
+    auto renderer = ImageRenderer2D(400, 400);
+    renderer.DrawTriangle({ {10., 10.}, {100., 10.}, {10., 100.} }, white);
+    renderer.DrawRectangle({ {150., 200.}, {300., 200 }, {315., 399.}, {200., 300. } }, red);
+    renderer.ExportImage("transformations");
 }
 
 int main()
@@ -188,6 +192,7 @@ int main()
     //triangle_tests();
     //bmw();
     //african_head();
-    transformationTests();
+    //transformationTests();
+    rendererTest();
     return 0;
 }
