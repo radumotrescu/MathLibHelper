@@ -182,8 +182,13 @@ void transformationTests()
 void rendererTest()
 {
     auto renderer = ImageRenderer2D(400, 400);
-    renderer.DrawTriangle({ {10., 10.}, {100., 10.}, {10., 100.} }, white);
-    renderer.DrawRectangle({ {150., 200.}, {300., 200 }, {315., 399.}, {200., 300. } }, red);
+    auto triangle = Triangle2D{ {10., 10.}, {100., 10.}, {10., 100.} };
+    auto rectangle = Rectangle2D{ {150., 200.}, {300., 200 }, {315., 399.}, {200., 300. } };
+    renderer.DrawTriangle(triangle, white);
+    renderer.DrawRectangle(rectangle, red);
+    triangle.rotate(75.);
+    triangle.translate({150., 0.});
+    renderer.DrawTriangle(triangle, white);
     renderer.ExportImage("transformations");
 }
 

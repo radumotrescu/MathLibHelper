@@ -39,13 +39,13 @@ public:
             std::swap(y0, y1);
         }
 
-        int dx = x1 - x0;
-        int dy = y1 - y0;
-        int derror = std::abs(dy) * 2;
+        const int dx = x1 - x0;
+        const int dy = y1 - y0;
+        const int derror = std::abs(dy) * 2;
         int error = 0;
 
         int y = y0;
-        int yIncr = y1 > y0 ? 1 : -1;
+        const int yIncr = y1 > y0 ? 1 : -1;
         for (auto x = x0; x <= x1; x++)
         {
             if (steep)
@@ -103,9 +103,9 @@ private:
         return { minX, maxX, minY, maxY };
     }
 
-    Vec3f barycentric(Vec2f p1, Vec2f p2, Vec2f p3, Vec2f P)
+    Vec3f barycentric(const Vec2f& p1, const Vec2f& p2, const Vec2f& p3, const Vec2f& P)
     {
-        auto u = Vec3f{ {p2.X() - p1.X(), p3.X() - p1.X(), p1.X() - P.X()} }.
+        const auto u = Vec3f{ {p2.X() - p1.X(), p3.X() - p1.X(), p1.X() - P.X()} }.
             Cross(Vec3f{ p2.Y() - p1.Y(),p3.Y() - p1.Y(), p1.Y() - P.Y() });
         if (std::abs(u.Z()) < 1)
             return { -1., 1., 1. };
