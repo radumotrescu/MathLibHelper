@@ -9,9 +9,26 @@ TEST_SUITE("Vec3 tests")
 {
     TEST_CASE("Vec3 equality operator works")
     {
-        const auto lhs = Vec3f{ {1., 1., 1.} };
-        const auto expected = std::array<double, 3>{ 1., 1., 1. };
-        REQUIRE_EQ(lhs.m_data, expected);
+        {
+            const auto lhs = Vec3f{ {1., 1., 1.} };
+            const auto expected = std::array<double, 3>{ 1., 1., 1. };
+            REQUIRE_EQ(lhs.m_data, expected);
+        }
+        {
+            const auto lhs = Vec3f{ {1.532, 1., 1.} };
+            const auto expected = std::array<double, 3>{ 1.532, 1., 1. };
+            REQUIRE_EQ(lhs.m_data, expected);
+        }
+        {
+            const auto lhs = Vec3f{ {1.532, 1., 1.} };
+            const auto expected = std::array<double, 3>{ 1.5325, 1., 1. };
+            REQUIRE_NE(lhs.m_data, expected);
+        }
+        {
+            const auto lhs = Vec3i{ {1, 1, 1} };
+            const auto expected = std::array<int, 3>{ 1, 1, 1 };
+            REQUIRE_EQ(lhs.m_data, expected);
+        }
     }
 
     TEST_CASE("Vec3 addition operator works")
