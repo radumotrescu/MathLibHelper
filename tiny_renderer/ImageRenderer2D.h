@@ -6,6 +6,8 @@
 
 #include <string>
 
+using namespace MathLib;
+
 class ImageRenderer2D
 {
 public:
