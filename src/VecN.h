@@ -3,9 +3,25 @@
 
 #include <array>
 #include <type_traits>
+#include <numeric>
 
 namespace MathLib
 {
+    template <typename IntegralType>
+    typename std::enable_if<std::is_integral<IntegralType>::value, bool>::type
+        equal(const IntegralType& t1, const IntegralType& t2)
+    {
+        return t1 == t2;
+    }
+
+
+    template <typename FloatingType>
+    typename std::enable_if<std::is_floating_point<FloatingType>::value, bool>::type
+        equal(const FloatingType& f1, const FloatingType& f2) {
+        return std::fabs(f1 - f2) < std::numeric_limits<FloatingType>::epsilon();
+    }
+
+
     template <class T, uint64_t size>
     struct VecN
     {
@@ -101,10 +117,11 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                if (rhs.m_data[i] != m_data[i])
+                if (!equal(rhs.m_data[i], m_data[i]))
                     return false;
             return true;
         };
+
 
         double Dot(const VecN& rhs) const
         {
