@@ -1,22 +1,22 @@
-#ifndef ImageRenderer2D_h_include
-#define ImageRenderer2D_h_include
+#ifndef ImageRenderer3D_h_include
+#define ImageRenderer3D_h_include
 
 #include "tgaimage.h"
 #include <Entities.h>
 
 #include <string>
 
-class ImageRenderer2D
+class ImageRenderer3D
 {
 public:
-    ImageRenderer2D(const uint32_t width, const uint32_t height)
+    ImageRenderer3D(const uint32_t width, const uint32_t height)
         :m_image(TGAImage(width, height, TGAImage::RGB))
     {
     }
 
-    ImageRenderer2D() = delete;
-    ImageRenderer2D(const ImageRenderer2D& other) = default;
-    ImageRenderer2D(ImageRenderer2D&& other) = default;
+    ImageRenderer3D() = delete;
+    ImageRenderer3D(const ImageRenderer3D& other) = default;
+    ImageRenderer3D(ImageRenderer3D&& other) = default;
 
     void DrawLine(const Line2D& line, const TGAColor& color)
     {

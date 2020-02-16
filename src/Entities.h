@@ -14,6 +14,7 @@ double d2r(double degrees)
     const double pi = std::acos(-1);
     return degrees * pi / 180.;
 }
+
 struct Point2D
 {
     Point2D(Vec2f data) : m_data(data) {};

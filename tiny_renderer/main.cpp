@@ -186,6 +186,8 @@ void rendererTest()
     auto rectangle = Rectangle2D{ {150., 200.}, {300., 200 }, {315., 399.}, {200., 300. } };
     renderer.DrawTriangle(triangle, white);
     renderer.DrawRectangle(rectangle, red);
+
+    // first scale, then rotate, then translate
     triangle.rotate(75.);
     triangle.translate({150., 0.});
     renderer.DrawTriangle(triangle, white);
