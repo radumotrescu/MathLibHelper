@@ -153,5 +153,46 @@ namespace MathLib
             m_data[3] = { result.at(0, 3), result.at(1, 3) };
         }
     };
+
+    struct Triangle3D
+    {
+        Triangle3D(Vec3f p1, Vec3f p2, Vec3f p3) : m_data{ p1, p2, p3 } {};
+        std::array<Vec3f, 3> m_data;
+
+        void scale(const Vec3f& scalingFactors)
+        {
+            auto scalingMatrix = Matrix<3, 3>({ { scalingFactors.X(), 0, 0 }, { 0, scalingFactors.Y(), 0 }, { 0., 0., scalingFactors.Z() } });
+            auto columnMajor = Matrix<3, 3>({
+                {m_data[0].X(), m_data[1].X(), m_data[2].X()}, 
+                {m_data[0].Y(), m_data[1].Y(), m_data[2].Y() },
+                {m_data[0].Z(), m_data[1].Z(), m_data[2].Z() } });
+
+            auto result = scalingMatrix * columnMajor;
+            m_data[0] = { result.at(0, 0), result.at(1, 0), result.at(2, 0) };
+            m_data[1] = { result.at(0, 1), result.at(1, 1), result.at(2, 0) };
+            m_data[2] = { result.at(0, 2), result.at(1, 2), result.at(2, 0) };
+        }
+
+        void translate(const Vec3f& offsets)
+        {
+            for (auto& point : m_data)
+                point = point + offsets;
+        }
+
+        void rotateZ(const double& degrees)
+        {
+            auto rads = d2r(degrees);
+            auto rotationMatrix = Matrix<3, 3>({ { std::cos(rads), -std::sin(rads), 0. }, { std::sin(rads), std::cos(rads), 0. }, {0., 0., 1.} });
+            auto columnMajor = Matrix<3, 3>({
+                {m_data[0].X(), m_data[1].X(), m_data[2].X()}, 
+                {m_data[0].Y(), m_data[1].Y(), m_data[2].Y() },
+                {m_data[0].Z(), m_data[1].Z(), m_data[2].Z() } });
+
+            auto result = rotationMatrix * columnMajor;
+            m_data[0] = { result.at(0, 0), result.at(1, 0), result.at(2, 0) };
+            m_data[1] = { result.at(0, 1), result.at(1, 1), result.at(2, 0) };
+            m_data[2] = { result.at(0, 2), result.at(1, 2), result.at(2, 0) };
+        }
+    };
 }
 #endif
