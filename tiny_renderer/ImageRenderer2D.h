@@ -13,6 +13,8 @@ class ImageRenderer2D
 public:
     ImageRenderer2D(const uint32_t width, const uint32_t height)
         :m_image(TGAImage(width, height, TGAImage::RGB))
+        ,m_width(width)
+        ,m_height(height)
     {
     }
 
