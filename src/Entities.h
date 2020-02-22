@@ -163,7 +163,7 @@ namespace MathLib
         {
             auto scalingMatrix = Matrix<3, 3>({ { scalingFactors.X(), 0, 0 }, { 0, scalingFactors.Y(), 0 }, { 0., 0., scalingFactors.Z() } });
             auto columnMajor = Matrix<3, 3>({
-                {m_data[0].X(), m_data[1].X(), m_data[2].X()}, 
+                {m_data[0].X(), m_data[1].X(), m_data[2].X()},
                 {m_data[0].Y(), m_data[1].Y(), m_data[2].Y() },
                 {m_data[0].Z(), m_data[1].Z(), m_data[2].Z() } });
 
@@ -184,7 +184,7 @@ namespace MathLib
             auto rads = d2r(degrees);
             auto rotationMatrix = Matrix<3, 3>({ { std::cos(rads), -std::sin(rads), 0. }, { std::sin(rads), std::cos(rads), 0. }, {0., 0., 1.} });
             auto columnMajor = Matrix<3, 3>({
-                {m_data[0].X(), m_data[1].X(), m_data[2].X()}, 
+                {m_data[0].X(), m_data[1].X(), m_data[2].X()},
                 {m_data[0].Y(), m_data[1].Y(), m_data[2].Y() },
                 {m_data[0].Z(), m_data[1].Z(), m_data[2].Z() } });
 
@@ -192,6 +192,17 @@ namespace MathLib
             m_data[0] = { result.at(0, 0), result.at(1, 0), result.at(2, 0) };
             m_data[1] = { result.at(0, 1), result.at(1, 1), result.at(2, 0) };
             m_data[2] = { result.at(0, 2), result.at(1, 2), result.at(2, 0) };
+        }
+
+        void perspectiveProject(const double& zDistance)
+        {
+            for (auto& trianglePoint : m_data)
+            {
+                const auto perspectiveVector = Vec3f{ 1. - trianglePoint.Z() / zDistance,
+                                                    1. - trianglePoint.Z() / zDistance,
+                                                    1. - trianglePoint.Z() / zDistance };
+                trianglePoint = trianglePoint / perspectiveVector;
+            }
         }
     };
 }
