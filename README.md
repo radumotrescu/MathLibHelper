@@ -1,5 +1,7 @@
 # MathLibHelper
 
+Based on: https://github.com/ssloy/tinyrenderer
+
 **HOW TO RUN**
 
 ----------
