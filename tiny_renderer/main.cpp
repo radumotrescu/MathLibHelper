@@ -6,6 +6,9 @@
 #include "Entities.h"
 #include "ImageRenderer2D.h"
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 using namespace MathLib;
 
 namespace
@@ -201,5 +204,6 @@ int main()
     //african_head();
     //transformationTests();
     rendererTest();
+    spdlog::info("welcome to logging");
     return 0;
 }

@@ -10,7 +10,7 @@ class MathLibHelper(ConanFile):
     generators = "cmake"
     exports = "*"
     options = {"shared": [True, False]}
-    requires = "doctest/2.3.4@bincrafters/stable"
+    requires = "doctest/2.3.4@bincrafters/stable", "spdlog/1.5.0"
     default_options = "shared=False"
 
     def build(self):
