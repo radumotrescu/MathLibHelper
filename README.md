@@ -2,6 +2,11 @@
 
 Based on: https://github.com/ssloy/tinyrenderer
 
+Uses SDL2 for rendering the pixels, no OpenGL.
+
+SDL2 used from Conan:
+https://github.com/bincrafters/conan-sdl2
+
 **HOW TO RUN**
 
 ----------
