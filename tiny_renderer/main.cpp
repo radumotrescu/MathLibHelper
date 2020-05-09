@@ -200,7 +200,7 @@ void rendererTest()
     renderer.ExportImage("transformations");
 }
 
-int main()
+int main(int argc, char ** argv)
 {
     //triangle_tests();
     //bmw();
@@ -220,17 +220,34 @@ int main()
         return 3;
     }
 
-    if (SDL_CreateWindowAndRenderer(320, 240, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+    if (SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
         return 3;
     }
+    auto pixels = std::vector<Uint32>();
+    pixels.resize(640 * 480);
+    std::fill(pixels.begin(), pixels.end(), 100000);
+
+    for (auto i = 0; i < 200 * 200; i++)
+        pixels[i] = 0;
+    
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 640, 480);
     while (1) {
         SDL_PollEvent(&event);
         if (event.type == SDL_QUIT) {
             break;
         }
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+
+        SDL_UpdateTexture(texture, NULL, pixels.data(), 640 * sizeof(Uint32));
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
     }
 
+
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
     return 0;
 }
