@@ -207,10 +207,18 @@ int main(int argc, char** argv)
     //bmw();
     //african_head();
     //transformationTests();
-    rendererTest();
-    spdlog::info("welcome to logging");
+    //rendererTest();
+
+
+    spdlog::info("Welcome to start of tiny renderer");
 
     auto sdl = SdlRenderer(640, 480);
+    auto t1 = std::make_shared<MathLib::Triangle3D>(Vec3f{ 0., 0., 0. }, Vec3f{ 0., 100., 0 }, Vec3f{ 100., 100., 0 });
+
+    sdl.AddRectangle(t1);
+
     sdl.Render();
+
+
     return 0;
 }
