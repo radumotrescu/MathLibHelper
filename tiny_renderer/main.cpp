@@ -1,8 +1,10 @@
+#include <iostream>
+#include <limits>
+#include <numeric>
+
 #include "tgaimage.h"
 #include "model.h"
 #include "../test/TestUtils.h"
-#include <iostream>
-#include <limits>
 #include "Entities.h"
 #include "ImageRenderer2D.h"
 
@@ -130,7 +132,7 @@ void african_head()
 
     auto model = Model("obj/african_head.obj");
     const auto light_dir = Vec3f{ 0 , 0, -1 };
-    auto zBuffer = std::vector<double>(width*height, std::numeric_limits<double>::lowest());
+    auto zBuffer = std::vector<double>(width * height, std::numeric_limits<double>::lowest());
 
     auto timer = TestUtils::Timer();
     for (auto i = 0; i < model.nfaces(); i++)
@@ -145,7 +147,7 @@ void african_head()
         for (int j = 0; j < 3; j++)
         {
             worldCoords[j] = model.vert(face[j]);
-            screenCoords[j] = Vec3f{ std::round((worldCoords[j].X() + 1.)*width / 2.), std::round((worldCoords[j].Y() + 1.)*height / 2.), worldCoords[j].Z() };
+            screenCoords[j] = Vec3f{ std::round((worldCoords[j].X() + 1.) * width / 2.), std::round((worldCoords[j].Y() + 1.) * height / 2.), worldCoords[j].Z() };
         }
 
         auto n = (worldCoords[2] - worldCoords[0]).Cross(worldCoords[1] - worldCoords[0]);
@@ -195,17 +197,17 @@ void rendererTest()
 
     // first scale, then rotate, then translate
     triangle.rotate(75.);
-    triangle.translate({150., 0.});
+    triangle.translate({ 150., 0. });
     renderer.DrawTriangle(triangle, white);
     renderer.ExportImage("transformations");
 }
 
-Uint32 RGBtoARGB(Uint16 r, Uint16 g, Uint16 b)
+bool EQ(double a, double b)
 {
-    return  (r << 16) + (g << 8) + b;
+    return std::fabs(a - b) < std::numeric_limits<double>::epsilon();
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
     //triangle_tests();
     //bmw();
@@ -214,41 +216,45 @@ int main(int argc, char ** argv)
     rendererTest();
     spdlog::info("welcome to logging");
 
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Surface* surface;
-    SDL_Texture* texture;
-    SDL_Event event;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
         return 3;
     }
 
-    if (SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+    auto window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_RESIZABLE);
+    if (!window) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
         return 3;
     }
-    auto pixels = std::vector<Uint32>();
-    pixels.resize(640 * 480);
-    std::fill(pixels.begin(), pixels.end(), RGBtoARGB(255, 0, 0));
 
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 640, 480);
+
+    auto windowSurface = SDL_GetWindowSurface(window);
+    auto wWidth = windowSurface->w;
+    auto wHeight = windowSurface->h;
+    auto wPixels = static_cast<unsigned int*>(windowSurface->pixels);
+
+    auto fade = 1.;
+    auto delta = -0.0001;
+    SDL_Event event;
     while (1) {
         SDL_PollEvent(&event);
         if (event.type == SDL_QUIT) {
             break;
         }
 
-        SDL_UpdateTexture(texture, NULL, pixels.data(), 640 * sizeof(Uint32));
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);
+        for (auto j = 0; j < wHeight; j++)
+            for (auto i = 0; i < wWidth; i++)
+                wPixels[i + j * wWidth] = SDL_MapRGBA(windowSurface->format, 200* fade, 100, 250, 255);
+
+        fade += delta;
+        if (EQ(fade, 0) || EQ(fade, 1))
+        {
+            delta = -delta;
+        }
+        SDL_UpdateWindowSurface(window);
     }
 
-
-    SDL_DestroyTexture(texture);
-    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
