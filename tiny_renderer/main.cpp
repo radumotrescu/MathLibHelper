@@ -200,6 +200,11 @@ void rendererTest()
     renderer.ExportImage("transformations");
 }
 
+Uint32 RGBtoARGB(Uint16 r, Uint16 g, Uint16 b)
+{
+    return  (r << 16) + (g << 8) + b;
+}
+
 int main(int argc, char ** argv)
 {
     //triangle_tests();
@@ -226,11 +231,8 @@ int main(int argc, char ** argv)
     }
     auto pixels = std::vector<Uint32>();
     pixels.resize(640 * 480);
-    std::fill(pixels.begin(), pixels.end(), 100000);
+    std::fill(pixels.begin(), pixels.end(), RGBtoARGB(255, 0, 0));
 
-    for (auto i = 0; i < 200 * 200; i++)
-        pixels[i] = 0;
-    
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 640, 480);
     while (1) {
         SDL_PollEvent(&event);
