@@ -27,9 +27,7 @@ public:
 
     void Render()
     {
-        auto wWidth = _surface->w;
-        auto wHeight = _surface->h;
-        auto wPixels = static_cast<unsigned int*>(_surface->pixels);
+        _pixels = static_cast<unsigned int*>(_surface->pixels);
 
         auto fade = 1.;
         auto delta = -0.0001;
@@ -41,9 +39,9 @@ public:
                 break;
             }
 
-            for (auto j = 0; j < wHeight; j++)
-                for (auto i = 0; i < wWidth; i++)
-                    wPixels[i + j * wWidth] = SDL_MapRGBA(_surface->format, 200 * fade, 100, 250, 255);
+            for (auto j = 0; j < _height; j++)
+                for (auto i = 0; i < _width; i++)
+                    _pixels[i + j * _width] = SDL_MapRGBA(_surface->format, 200 * fade, 100, 250, 255);
 
             fade += delta;
             
@@ -60,8 +58,11 @@ public:
     }
 
 private:
-    SDL_Window* _window;
-    SDL_Surface* _surface;
     uint _width;
     uint _height;
+
+    // these should not be deleted by hand, only by SDL
+    SDL_Window* _window;
+    SDL_Surface* _surface;
+    uint* _pixels;
 };
