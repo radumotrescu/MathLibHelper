@@ -7,12 +7,10 @@
 #include "../test/TestUtils.h"
 #include "Entities.h"
 #include "ImageRenderer2D.h"
+#include "SdlRenderer.h"
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
-
-#define SDL_MAIN_HANDLED
-#include <SDL.h>
 
 using namespace MathLib;
 
@@ -202,10 +200,6 @@ void rendererTest()
     renderer.ExportImage("transformations");
 }
 
-bool EQ(double a, double b)
-{
-    return std::fabs(a - b) < std::numeric_limits<double>::epsilon();
-}
 
 int main(int argc, char** argv)
 {
@@ -216,46 +210,7 @@ int main(int argc, char** argv)
     rendererTest();
     spdlog::info("welcome to logging");
 
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
-        return 3;
-    }
-
-    auto window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_RESIZABLE);
-    if (!window) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window and renderer: %s", SDL_GetError());
-        return 3;
-    }
-
-
-    auto windowSurface = SDL_GetWindowSurface(window);
-    auto wWidth = windowSurface->w;
-    auto wHeight = windowSurface->h;
-    auto wPixels = static_cast<unsigned int*>(windowSurface->pixels);
-
-    auto fade = 1.;
-    auto delta = -0.0001;
-    SDL_Event event;
-    while (1) {
-        SDL_PollEvent(&event);
-        if (event.type == SDL_QUIT) {
-            break;
-        }
-
-        for (auto j = 0; j < wHeight; j++)
-            for (auto i = 0; i < wWidth; i++)
-                wPixels[i + j * wWidth] = SDL_MapRGBA(windowSurface->format, 200* fade, 100, 250, 255);
-
-        fade += delta;
-        if (EQ(fade, 0) || EQ(fade, 1))
-        {
-            delta = -delta;
-        }
-        SDL_UpdateWindowSurface(window);
-    }
-
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    auto sdl = SdlRenderer(640, 480);
+    sdl.Render();
     return 0;
 }
