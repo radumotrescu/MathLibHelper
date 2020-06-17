@@ -213,9 +213,15 @@ int main(int argc, char** argv)
     spdlog::info("Welcome to start of tiny renderer");
 
     auto sdl = SdlRenderer(640, 480);
+
     auto t1 = std::make_shared<MathLib::Triangle3D>(Vec3f{ 0., 0., 0. }, Vec3f{ 0., 100., 0 }, Vec3f{ 100., 100., 0 });
 
     sdl.AddRectangle(t1);
+    for (int i = 0; i < 1000; i++)
+    {
+        auto t = std::make_shared<MathLib::Triangle3D>(Vec3f{ 0., 0., 0. }, Vec3f{ 100., 0., 0 }, Vec3f{ 100., 100., 0 });
+        sdl.AddRectangle(t);
+    }
 
     sdl.Render();
 

@@ -22,7 +22,7 @@ namespace MathLib
     }
 
 
-    template <class T, uint64_t size>
+    template <typename T, uint64_t size>
     struct VecN
     {
         VecN()
@@ -37,6 +37,7 @@ namespace MathLib
                 m_data[i++] = x;
             }
         }
+
 
         VecN(const std::array<T, size>& data)
             :m_data(data)
@@ -131,12 +132,20 @@ namespace MathLib
             return dotProduct;
         }
 
+        //template <typename = std::enable_if_t<size == 3>>
+        //VecN Cross(const VecN& rhs)
+        //{
+        //    return { Y() * rhs[2] - Z() * rhs[1],
+        //            -(X() * rhs[2] - Z() * rhs[0]),
+        //            X()* rhs[1] - Y() * rhs[0] };
+        //}
+
         template <typename = std::enable_if_t<size == 3>>
         VecN Cross(const VecN& rhs)
         {
-            return { Y()* rhs.Z() - Z() * rhs.Y(),
-                    -(X() * rhs.Z() - Z() * rhs.X()),
-                    X()* rhs.Y() - Y() * rhs.X() };
+            return { m_data[1]* rhs[2] - m_data[2] * rhs[1],
+                    -(m_data[0] * rhs[2] - m_data[2] * rhs[0]),
+                    m_data[0]* rhs[1] - m_data[1] * rhs[0] };
         }
 
         void Normalize()
@@ -150,30 +159,30 @@ namespace MathLib
         }
 
         template <typename = std::enable_if_t<size >= 1>>
-        T X() const
+        inline const T& X() const
         {
             return m_data[0];
         }
 
         template <typename = std::enable_if_t<size >= 2>>
-        T Y() const
+        inline const T& Y() const
         {
             return m_data[1];
         }
 
         template <typename = std::enable_if_t<size >= 3>>
-        T Z() const
+        inline const T& Z() const
         {
             return m_data[2];
         }
 
         template <typename = std::enable_if_t<size >= 4>>
-        T W() const
+        inline const T& W() const
         {
             return m_data[3];
         }
 
-        T& operator[](int index) const
+        const T& operator[](int index) const
         {
             return m_data[index];
         }
@@ -188,6 +197,7 @@ namespace MathLib
     using Vec2i = VecN<int, 2>;
     using Vec3i = VecN<int, 3>;
     using Vec4i = VecN<int, 4>;
+
 }
 
 #endif

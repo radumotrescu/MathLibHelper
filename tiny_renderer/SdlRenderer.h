@@ -128,7 +128,7 @@ public:
                 }
 
             SDL_UpdateWindowSurface(_window);
-            spdlog::info("frametime: {} milliseconds", timer.Elapsed());
+            spdlog::info("fps: {}", 1./timer.Elapsed()*1000);
         }
 
         SDL_DestroyWindow(_window);
@@ -143,7 +143,7 @@ private:
     };
     using BB = BoundingBox;
 
-    BB findBB(Vec3f p1, Vec3f p2, Vec3f p3)
+    BB findBB(const Vec3f& p1, const Vec3f& p2, const Vec3f& p3)
     {
         auto minMaxX = std::minmax({ p1.X(), p2.X(), p3.X() });
         auto minMaxY = std::minmax({ p1.Y(), p2.Y(), p3.Y() });
@@ -154,9 +154,9 @@ private:
         return { minX, maxX, minY, maxY };
     }
 
-    Vec3f barycentric(Vec3f p1, Vec3f p2, Vec3f p3, Vec3f P)
+    Vec3f barycentric(const Vec3f& p1, const Vec3f& p2, const Vec3f& p3, const Vec3f& P)
     {
-        auto u = Vec3f{ {p2.X() - p1.X(), p3.X() - p1.X(), p1.X() - P.X()} }.
+        const auto u = Vec3f{ {p2.X() - p1.X(), p3.X() - p1.X(), p1.X() - P.X()} }.
             Cross(Vec3f{ p2.Y() - p1.Y(),p3.Y() - p1.Y(), p1.Y() - P.Y() });
         if (std::abs(u.Z()) < 1)
             return { -1., 1., 1. };
