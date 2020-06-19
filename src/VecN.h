@@ -90,7 +90,7 @@ namespace MathLib
             return { data };
         };
 
-        VecN operator*(VecN rhs) const
+        VecN operator*(const VecN& rhs) const
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
@@ -106,7 +106,7 @@ namespace MathLib
             return { data };
         }
 
-        VecN operator/(VecN rhs) const
+        VecN operator/(const VecN& rhs) const
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)

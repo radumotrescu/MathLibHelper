@@ -214,14 +214,19 @@ int main(int argc, char** argv)
 
     auto sdl = SdlRenderer(640, 480);
 
-    auto t1 = std::make_shared<MathLib::Triangle3D>(Vec3f{ 0., 0., 0. }, Vec3f{ 0., 100., 0 }, Vec3f{ 100., 100., 0 });
-
+    auto t1 = std::make_shared<MathLib::Triangle3D>(Vec3f{ 200., 200., 1. }, Vec3f{ 300., 200., 1. }, Vec3f{ 300., 300., 2. });
+    t1->perspectiveProject(10.);
     sdl.AddRectangle(t1);
-    for (int i = 0; i < 1000; i++)
-    {
-        auto t = std::make_shared<MathLib::Triangle3D>(Vec3f{ 0., 0., 0. }, Vec3f{ 100., 0., 0 }, Vec3f{ 100., 100., 0 });
-        sdl.AddRectangle(t);
-    }
+
+    auto t2 = std::make_shared<MathLib::Triangle3D>(Vec3f{ 400., 200., 2. }, Vec3f{ 400., 300., 2. }, Vec3f{ 500., 300., 2. });
+    t2->perspectiveProject(10);
+    //sdl.AddRectangle(t2);
+
+    //for (int i = 0; i < 1000; i++)
+    //{
+    //    auto t = std::make_shared<MathLib::Triangle3D>(Vec3f{ 0., 0., 0. }, Vec3f{ 100., 0., 0 }, Vec3f{ 100., 100., 0 });
+    //    sdl.AddRectangle(t);
+    //}
 
     sdl.Render();
 

@@ -116,7 +116,6 @@ public:
                             }
                         }
                     }
-                    t->translate(Vec3f{0.1, 0., 0.});
                 }
             }
 
