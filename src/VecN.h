@@ -35,35 +35,35 @@ namespace MathLib
             int i = 0;
             for (const auto& x : data)
             {
-                m_data[i++] = x;
+                _data[i++] = x;
             }
         }
 
 
         VecN(const std::array<T, size>& data)
-            :m_data(data)
+            :_data(data)
         {
         }
 
         VecN(VecN&& other)
         {
-            m_data = other.m_data;
+            _data = other._data;
         }
 
         VecN& operator=(VecN&& other)
         {
-            m_data = other.m_data;
+            _data = other._data;
             return *this;
         }
 
         VecN(const VecN& other)
         {
-            m_data = other.m_data;
+            _data = other._data;
         }
 
         VecN& operator=(const VecN& other)
         {
-            m_data = other.m_data;
+            _data = other._data;
             return *this;
         }
 
@@ -71,7 +71,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                data[i] = m_data[i] + rhs.m_data[i];
+                data[i] = _data[i] + rhs._data[i];
             return { data };
         };
 
@@ -79,7 +79,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                data[i] = m_data[i] - rhs.m_data[i];
+                data[i] = _data[i] - rhs._data[i];
             return { data };
         };
 
@@ -87,7 +87,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                data[i] = m_data[i] * scalar;
+                data[i] = _data[i] * scalar;
             return { data };
         };
 
@@ -95,7 +95,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                data[i] = m_data[i] * rhs.m_data[i];
+                data[i] = _data[i] * rhs._data[i];
             return { data };
         }
 
@@ -103,7 +103,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                data[i] = m_data[i] / scalar;
+                data[i] = _data[i] / scalar;
             return { data };
         }
 
@@ -111,7 +111,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                data[i] = m_data[i] / rhs.m_data[i];
+                data[i] = _data[i] / rhs._data[i];
             return { data };
         }
 
@@ -119,7 +119,7 @@ namespace MathLib
         {
             auto data = std::array<double, size>();
             for (auto i = 0; i < size; i++)
-                if (!equal(rhs.m_data[i], m_data[i]))
+                if (!equal(rhs._data[i], _data[i]))
                     return false;
             return true;
         };
@@ -129,7 +129,7 @@ namespace MathLib
         {
             auto dotProduct = 0.;
             for (auto i = 0; i < size; i++)
-                dotProduct += m_data[i] * rhs.m_data[i];
+                dotProduct += _data[i] * rhs._data[i];
             return dotProduct;
         }
 
@@ -148,51 +148,51 @@ namespace MathLib
         template <typename = std::enable_if<size == 3>>
         VecN Cross(const VecN& rhs)
         {
-            return { m_data[1]* rhs[2] - m_data[2] * rhs[1],
-                    -(m_data[0] * rhs[2] - m_data[2] * rhs[0]),
-                    m_data[0]* rhs[1] - m_data[1] * rhs[0] };
+            return { _data[1]* rhs[2] - _data[2] * rhs[1],
+                    -(_data[0] * rhs[2] - _data[2] * rhs[0]),
+                    _data[0]* rhs[1] - _data[1] * rhs[0] };
         }
 
         void Normalize()
         {
             auto sumOfSquares = 0.;
-            for (const auto& data : m_data)
+            for (const auto& data : _data)
                 sumOfSquares += data * data;
             const auto norm = sqrt(sumOfSquares);
-            for (auto& data : m_data)
+            for (auto& data : _data)
                 data /= norm;
         }
 
         template <typename = std::enable_if<size >= 1 >>
         inline const T& X() const
         {
-            return m_data[0];
+            return _data[0];
         }
 
         template <typename = std::enable_if<size >= 2 >>
         inline const T& Y() const
         {
-            return m_data[1];
+            return _data[1];
         }
 
         template <typename = std::enable_if<size >= 3 >>
         inline const T& Z() const
         {
-            return m_data[2];
+            return _data[2];
         }
 
         template <typename = std::enable_if<size >= 4 >>
         inline const T& W() const
         {
-            return m_data[3];
+            return _data[3];
         }
 
         const T& operator[](int index) const
         {
-            return m_data[index];
+            return _data[index];
         }
 
-        std::array<T, size> m_data;
+        std::array<T, size> _data;
     };
 
     using Vec2f = VecN<double, 2>;

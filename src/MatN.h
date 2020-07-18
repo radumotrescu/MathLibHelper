@@ -76,7 +76,6 @@ namespace MathLib
                 return {};
 
             auto md = MatrixData(rowSize, std::vector<double>(colSize, 0));
-#pragma omp parallel for
             for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
             {
                 for (auto colIdx = 0; colIdx < colSize; colIdx++)
@@ -92,7 +91,6 @@ namespace MathLib
             if (!SizesAreEqual(rhs))
                 return {};
             auto md = MatrixData(rowSize, std::vector<double>(colSize, 0));
-#pragma omp parallel for
             for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)
             {
                 for (auto colIdx = 0; colIdx < colSize; colIdx++)

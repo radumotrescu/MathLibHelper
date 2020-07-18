@@ -69,9 +69,9 @@ public:
         _pixels = static_cast<unsigned int*>(_surface->pixels);
     }
 
-    void AddRectangle(std::shared_ptr<MathLib::Triangle3D> triangle)
+    void AddRectangle(std::shared_ptr<MathLib::Triangle3D> triangle, const Color& color )
     {
-        _triangles.push_back(triangle);
+        _triangles.push_back({ triangle, color });
     }
 
     void Render()
@@ -92,8 +92,7 @@ public:
             }
             // process triangles
             {
-                auto red = Color(255, 0, 0, 255);
-                for (const auto& t : _triangles)
+                for (const auto& [t, color] : _triangles)
                 {
                     const auto& p1 = t->m_data[0];
                     const auto& p2 = t->m_data[1];
@@ -112,7 +111,7 @@ public:
                             if (z >= _zBuffer[static_cast<int>(x + y * _width)])
                             {
                                 _zBuffer[static_cast<int>(x + y * _width)] = z;
-                                _pixelColors[x + y * _width] = red;
+                                _pixelColors[x + y * _width] = color;
                             }
                         }
                     }
@@ -172,5 +171,6 @@ private:
     std::vector<double> _zBuffer;
     std::vector<Color> _pixelColors;
 
-    std::vector<std::shared_ptr<MathLib::Triangle3D>> _triangles;
+    // triangles and other entities
+    std::vector<std::pair<std::shared_ptr<MathLib::Triangle3D>, Color>> _triangles;
 };
