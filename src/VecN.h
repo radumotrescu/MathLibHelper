@@ -4,6 +4,7 @@
 #include <array>
 #include <type_traits>
 #include <numeric>
+#include <cmath>
 
 namespace MathLib
 {
@@ -132,21 +133,25 @@ namespace MathLib
             return dotProduct;
         }
 
-        template <typename = std::enable_if_t<size == 3>>
+        // this version will only perform with Clang
+        /*
+        template <typename = std::enable_if<size == 3>>
         inline VecN Cross(const VecN& rhs)
         {
             return { Y() * rhs[2] - Z() * rhs[1],
-                    -(m_data[0] * rhs[2] - Z() * rhs[0]),
+                    -(X() * rhs[2] - Z() * rhs[0]),
                     X()* rhs[1] - Y() * rhs[0] };
         }
+        */
 
-        //template <typename = std::enable_if_t<size == 3>>
-        //VecN Cross(const VecN& rhs)
-        //{
-        //    return { m_data[1]* rhs[2] - m_data[2] * rhs[1],
-        //            -(m_data[0] * rhs[2] - m_data[2] * rhs[0]),
-        //            m_data[0]* rhs[1] - m_data[1] * rhs[0] };
-        //}
+
+        template <typename = std::enable_if<size == 3>>
+        VecN Cross(const VecN& rhs)
+        {
+            return { m_data[1]* rhs[2] - m_data[2] * rhs[1],
+                    -(m_data[0] * rhs[2] - m_data[2] * rhs[0]),
+                    m_data[0]* rhs[1] - m_data[1] * rhs[0] };
+        }
 
         void Normalize()
         {
@@ -158,25 +163,25 @@ namespace MathLib
                 data /= norm;
         }
 
-        template <typename = std::enable_if_t<size >= 1>>
+        template <typename = std::enable_if<size >= 1 >>
         inline const T& X() const
         {
             return m_data[0];
         }
 
-        template <typename = std::enable_if_t<size >= 2>>
+        template <typename = std::enable_if<size >= 2 >>
         inline const T& Y() const
         {
             return m_data[1];
         }
 
-        template <typename = std::enable_if_t<size >= 3>>
+        template <typename = std::enable_if<size >= 3 >>
         inline const T& Z() const
         {
             return m_data[2];
         }
 
-        template <typename = std::enable_if_t<size >= 4>>
+        template <typename = std::enable_if<size >= 4 >>
         inline const T& W() const
         {
             return m_data[3];
@@ -197,7 +202,6 @@ namespace MathLib
     using Vec2i = VecN<int, 2>;
     using Vec3i = VecN<int, 3>;
     using Vec4i = VecN<int, 4>;
-
 }
 
 #endif
