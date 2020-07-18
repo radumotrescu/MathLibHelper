@@ -39,7 +39,6 @@ namespace MathLib
                 return {};
 
             auto md = Matrix<rowSize, colSize_>();
-#pragma omp parallel for
             if (colSize_ != colSize || rowSize != rowSize_)
             {
                 for (auto rowIdx = 0; rowIdx < rowSize; rowIdx++)

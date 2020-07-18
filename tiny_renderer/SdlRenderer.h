@@ -30,16 +30,16 @@ struct Color
     Color(int v, int bpp) : val(v), bytespp(bpp) {
     }
 
-    Color(const Color &c) : val(c.val), bytespp(c.bytespp) {
+    Color(const Color& c) : val(c.val), bytespp(c.bytespp) {
     }
 
-    Color(const unsigned char *p, int bpp) : val(0), bytespp(bpp) {
+    Color(const unsigned char* p, int bpp) : val(0), bytespp(bpp) {
         for (int i = 0; i < bpp; i++) {
             raw[i] = p[i];
         }
     }
 
-    Color & operator =(const Color &c) {
+    Color& operator =(const Color& c) {
         if (this != &c) {
             bytespp = c.bytespp;
             val = c.val;
@@ -127,7 +127,7 @@ public:
                 }
 
             SDL_UpdateWindowSurface(_window);
-            spdlog::info("fps: {}", 1./timer.Elapsed()*1000);
+            spdlog::info("fps: {}", 1. / timer.Elapsed() * 1000);
         }
 
         SDL_DestroyWindow(_window);

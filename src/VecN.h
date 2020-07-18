@@ -132,21 +132,21 @@ namespace MathLib
             return dotProduct;
         }
 
+        template <typename = std::enable_if_t<size == 3>>
+        inline VecN Cross(const VecN& rhs)
+        {
+            return { Y() * rhs[2] - Z() * rhs[1],
+                    -(m_data[0] * rhs[2] - Z() * rhs[0]),
+                    X()* rhs[1] - Y() * rhs[0] };
+        }
+
         //template <typename = std::enable_if_t<size == 3>>
         //VecN Cross(const VecN& rhs)
         //{
-        //    return { Y() * rhs[2] - Z() * rhs[1],
-        //            -(X() * rhs[2] - Z() * rhs[0]),
-        //            X()* rhs[1] - Y() * rhs[0] };
+        //    return { m_data[1]* rhs[2] - m_data[2] * rhs[1],
+        //            -(m_data[0] * rhs[2] - m_data[2] * rhs[0]),
+        //            m_data[0]* rhs[1] - m_data[1] * rhs[0] };
         //}
-
-        template <typename = std::enable_if_t<size == 3>>
-        VecN Cross(const VecN& rhs)
-        {
-            return { m_data[1]* rhs[2] - m_data[2] * rhs[1],
-                    -(m_data[0] * rhs[2] - m_data[2] * rhs[0]),
-                    m_data[0]* rhs[1] - m_data[1] * rhs[0] };
-        }
 
         void Normalize()
         {
