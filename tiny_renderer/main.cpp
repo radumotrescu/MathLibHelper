@@ -87,7 +87,7 @@ Vec3f barycentric(Vec3f p1, Vec3f p2, Vec3f p3, Vec3f P)
     return Vec3f{ {1. - (u.X() + u.Y()) / u.Z(), u.Y() / u.Z(), u.X() / u.Z()} };
 }
 
-void triangle(Vec3f p1, Vec3f p2, Vec3f p3, std::vector<double>& zBuffer, TGAImage& image, const TGAColor& color)
+void triangle(Vec3f p1, Vec3f p2, Vec3f p3, const std::vector<Vec2f>& uv, std::vector<double>& zBuffer, TGAImage& image, double intensity, Model& model)
 {
     auto bb = findBB(p1, p2, p3);
 
@@ -101,8 +101,15 @@ void triangle(Vec3f p1, Vec3f p2, Vec3f p3, std::vector<double>& zBuffer, TGAIma
             auto z = p1.Z() * bc.X() + p2.Z() * bc.Y() + p3.Z() * bc.Z();
             if (z >= zBuffer[static_cast<int>(x + y * width)])
             {
+                //auto color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
+
+                auto uvp = Vec2i{ static_cast<int>(uv[0].X() * bc.X() + uv[1].X() * bc.X() + uv[2].X() * bc.X()),
+                                  static_cast<int>(uv[0].Y() * bc.Y() + uv[1].Y() * bc.Y() + uv[2].Y() * bc.Y())};
+
+                auto color = model.color(uvp);
+
                 zBuffer[static_cast<int>(x + y * width)] = z;
-                image.set(x, y, color);
+                image.set(x, y, TGAColor(color.r*intensity, color.g*intensity, color.b*intensity, color.a));
             }
         }
     }
@@ -129,6 +136,7 @@ void african_head()
     TGAImage image(width, height, TGAImage::RGB);
 
     auto model = Model("obj/african_head.obj");
+    model.loadTexture("obj/african_head_texture.tga");
     const auto light_dir = Vec3f{ 0 , 0, -1 };
     auto zBuffer = std::vector<double>(width * height, std::numeric_limits<double>::lowest());
 
@@ -153,7 +161,16 @@ void african_head()
         auto intensity = n.Dot(light_dir);
 
         if (intensity > 0)
-            triangle(screenCoords[0], screenCoords[1], screenCoords[2], zBuffer, image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+        {
+            auto uv = std::vector<Vec2f>();
+            uv.resize(3);
+            for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) // for each vertex in the face
+            {
+                uv[vertexIdx] = model.uv(i, vertexIdx);
+            }
+
+            triangle(screenCoords[0], screenCoords[1], screenCoords[2], uv, zBuffer, image, intensity, model);
+        }
     }
     std::cout << '\n' << timer.Elapsed() << " milliseconds";
 
@@ -200,16 +217,8 @@ void rendererTest()
     renderer.ExportImage("transformations");
 }
 
-
-int main(int argc, char** argv)
+void perfTest()
 {
-    //triangle_tests();
-    //bmw();
-    //african_head();
-    //transformationTests();
-    //rendererTest();
-
-
     spdlog::info("Welcome to start of tiny renderer");
 
     auto sdl = SdlRenderer(640, 480);
@@ -232,6 +241,16 @@ int main(int argc, char** argv)
     }
 
     sdl.Render();
+}
+
+
+int main(int argc, char** argv)
+{
+    //triangle_tests();
+    //bmw();
+    african_head();
+    //transformationTests();
+    //rendererTest();
 
     return 0;
 }

@@ -5,6 +5,8 @@
 #include <type_traits>
 #include <numeric>
 #include <cmath>
+#include <stdint.h>
+#include <limits>
 
 namespace MathLib
 {
@@ -188,6 +190,11 @@ namespace MathLib
         }
 
         const T& operator[](int index) const
+        {
+            return _data[index];
+        }
+
+        T& operator[](int index)
         {
             return _data[index];
         }
