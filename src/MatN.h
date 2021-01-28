@@ -22,6 +22,23 @@ namespace MathLib
             m_data = init_data;
         }
 
+        std::vector<double>& operator[](const int index)
+        {
+            return m_data[index];
+        }
+
+        std::vector<double> operator[](const int index) const
+        {
+            return m_data[index];
+        }
+
+        template <typename = std::enable_if<rowSize == colSize >>
+        void Identity()
+        {
+            for (auto i = 0; i < rowSize; i++)
+                m_data[i][i] = 1.;
+        }
+
         MatrixData GetData() const
         {
             return m_data;

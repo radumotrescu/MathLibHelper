@@ -21,6 +21,7 @@ namespace
     const TGAColor green = TGAColor(0, 255, 0, 255);
     const int width = 800;
     const int height = 800;
+    const int depth = 255;
 }
 
 void line(int x0, int y0, int x1, int y1, TGAImage& image, const TGAColor& color)
@@ -87,7 +88,7 @@ Vec3f barycentric(Vec3f p1, Vec3f p2, Vec3f p3, Vec3f P)
     return Vec3f{ {1. - (u.X() + u.Y()) / u.Z(), u.Y() / u.Z(), u.X() / u.Z()} };
 }
 
-void triangle(Vec3f p1, Vec3f p2, Vec3f p3, const std::vector<Vec2f>& uv, std::vector<double>& zBuffer, TGAImage& image, double intensity, Model& model)
+void triangle(Vec3f p1, Vec3f p2, Vec3f p3, const std::vector<Vec2f>& uv, std::vector<double>& zBuffer, TGAImage& image, double intensity, const TGAColor& color)
 {
     auto bb = findBB(p1, p2, p3);
 
@@ -99,15 +100,11 @@ void triangle(Vec3f p1, Vec3f p2, Vec3f p3, const std::vector<Vec2f>& uv, std::v
             if (bc.X() < 0 || bc.Y() < 0 || bc.Z() < 0)
                 continue;
             auto z = p1.Z() * bc.X() + p2.Z() * bc.Y() + p3.Z() * bc.Z();
+            if (static_cast<int>(x + y * width) > zBuffer.size())
+                continue;
+
             if (z >= zBuffer[static_cast<int>(x + y * width)])
             {
-                //auto color = TGAColor(255 * intensity, 255 * intensity, 255 * intensity, 255);
-
-                auto uvp = Vec2i{ static_cast<int>(uv[0].X() * bc.X() + uv[1].X() * bc.X() + uv[2].X() * bc.X()),
-                                  static_cast<int>(uv[0].Y() * bc.Y() + uv[1].Y() * bc.Y() + uv[2].Y() * bc.Y())};
-
-                auto color = model.color(uvp);
-
                 zBuffer[static_cast<int>(x + y * width)] = z;
                 image.set(x, y, TGAColor(color.r*intensity, color.g*intensity, color.b*intensity, color.a));
             }
@@ -131,16 +128,60 @@ void triangle_tests()
     image.write_tga_file("output.tga");
 }
 
+Mat4 viewport(int x, int y, int w, int h)
+{
+    auto m = Mat4();
+    m.Identity();
+
+    m[0][3] = x;
+    m[1][3] = y;
+    m[2][3] = depth / 2.;
+
+    m[0][0] = w / 2.;
+    m[1][1] = h / 2.;
+    m[2][2] = depth / 2.;
+
+    return m;
+}
+
+Vec3f m2v(const Mat4& m)
+{
+    return Vec3f{ m[0][0] / m[3][0],
+                 m[1][0] / m[3][0],
+                 m[2][0] / m[3][0] };
+}
+
+Mat4 v2m(const Vec3f& v)
+{
+    auto m = Mat4();
+    m[0][0] = v.X();
+    m[1][0] = v.Y();
+    m[2][0] = v.Z();
+    m[3][0] = 1.;
+
+    return m;
+}
+
+
 void african_head()
 {
     TGAImage image(width, height, TGAImage::RGB);
 
     auto model = Model("obj/african_head.obj");
-    model.loadTexture("obj/african_head_texture.tga");
+    //model.loadTexture("obj/african_head_texture.tga");
     const auto light_dir = Vec3f{ 0 , 0, -1 };
     auto zBuffer = std::vector<double>(width * height, std::numeric_limits<double>::lowest());
 
     auto timer = TestUtils::Timer();
+
+    auto projection = Mat4{};
+    projection.Identity();
+
+    auto vp = viewport(400, 400, 600, 600);
+
+    auto cameraZdistance = 5.;
+    projection[3][2] = -1. / cameraZdistance;
+
     for (auto i = 0; i < model.nfaces(); i++)
     {
         // each face has 3 lines
@@ -153,7 +194,16 @@ void african_head()
         for (int j = 0; j < 3; j++)
         {
             worldCoords[j] = model.vert(face[j]);
-            screenCoords[j] = Vec3f{ std::round((worldCoords[j].X() + 1.) * width / 2.), std::round((worldCoords[j].Y() + 1.) * height / 2.), worldCoords[j].Z() };
+
+            //screenCoords[j] = Vec3f{ std::round((worldCoords[j].X() + 1.) * width / 2.), std::round((worldCoords[j].Y() + 1.) * height / 2.), worldCoords[j].Z() };
+
+            auto v = v2m(worldCoords[j]);
+            //screenCoords[j] = m2v(vp * v);
+
+            screenCoords[j] = m2v(vp * projection * v);
+            screenCoords[j][0] = std::round(screenCoords[j][0]);
+            screenCoords[j][1] = std::round(screenCoords[j][1]);
+            screenCoords[j][2] = std::round(screenCoords[j][2]);
         }
 
         auto n = (worldCoords[2] - worldCoords[0]).Cross(worldCoords[1] - worldCoords[0]);
@@ -169,7 +219,7 @@ void african_head()
                 uv[vertexIdx] = model.uv(i, vertexIdx);
             }
 
-            triangle(screenCoords[0], screenCoords[1], screenCoords[2], uv, zBuffer, image, intensity, model);
+            triangle(screenCoords[0], screenCoords[1], screenCoords[2], uv, zBuffer, image, intensity, white);
         }
     }
     std::cout << '\n' << timer.Elapsed() << " milliseconds";
